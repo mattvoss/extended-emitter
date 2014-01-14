@@ -25,7 +25,7 @@ when
     
 and there's also the addition of the `when` function which can take ready-style arguments
 
-    emitter.when($(document).ready, 'my-init-event', 'my-load-event', function(){
+    emitter.when([$(document).ready, 'my-init-event', 'my-load-event'], function(){
     
     });
     

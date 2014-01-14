@@ -1,22 +1,21 @@
 {
-    "name": "index-compressor",
-    "homepage": "https://github.com/khrome/index-compressor",
+    "name": "extended-emitter",
+    "homepage": "https://github.com/khrome/extended-emitter",
     "version": "0.0.1-alpha",
-    "main": "index-compressor.js",
-    "description": "A utility for compressing arrays of objects containing many repeated values.",
+    "main": "extended-emitter.js",
+    "description": "An emitter with expanded utility.",
     "keywords": [
-        "compression",
-        "lists"
+        "emitter"
     ],
     "author": "Abbey Hawk Sparrow <@khrome> (http://patternweaver.com)",
     "contributors": [],
     "bugs": {
-        "url": "https://github.com/khrome/index-compressor/issues"
+        "url": "https://github.com/khrome/extended-emitter/issues"
     },
     "license": "MIT",
     "repository": {
         "type": "git",
-        "url": "git@github.com:khrome/index-compressor.git"
+        "url": "git@github.com:khrome/extended-emitter.git"
     },
     "dependencies": {
     },
