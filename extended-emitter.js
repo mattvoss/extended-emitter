@@ -1,80 +1,79 @@
-var EventEmitter = require('events').EventEmitter;
-
-function processArgs(args){
-    var result = {};
-    if(typeof args[args.length-1] == 'function'){
-        result.callback = args[args.length-1];
+(function(root, factory){
+    if (typeof define === 'function' && define.amd){
+        define(['wolfy87-eventemitter', ''], factory);
+    }else if(typeof exports === 'object'){
+        module.exports = factory(require('events').EventEmitter);
+    }else{
+        root.ExtendedEmitter = factory(root.EventEmitter);
     }
-    args = Array.prototype.slice.call(args);
-    result.name = args.shift();
-    result.conditions = args[0] || {};
-    return result;
-}
+}(this, function(EventEmitter){
 
-function meetsCriteria(name, object, testName, testObject){
-    if(name != testName) return false;
-    var result = true;
-    Object.keys(testObject).forEach(function(key){
-        result = result && object[key] === testObject[key];
-    });
-    return result;
-}
-
-function ExtendedEmitter(){
-    return EventEmitter.apply(this, arguments);
-}
-
-//ExtendedEmitter.prototype = EventEmitter.prototype;
-ExtendedEmitter.prototype = {};
-for(var key in EventEmitter.prototype){
-    ExtendedEmitter.prototype[key] = EventEmitter.prototype[key];
-}
-
-ExtendedEmitter.prototype.off = function(event, fn){
-    return this.removeListener.apply(this, arguments)
-};
-
-var on = ExtendedEmitter.prototype.on;
-
-ExtendedEmitter.prototype.on = function(name){
-    var args = processArgs(arguments);
-    on.apply(this, [args.name, function(data){
-        if(meetsCriteria(name, data, args.name, args.conditions)){
-            args.callback();
+    function processArgs(args){
+        var result = {};
+        if(typeof args[args.length-1] == 'function'){
+            result.callback = args[args.length-1];
         }
-    }]);
-}
+        args = Array.prototype.slice.call(args);
+        result.name = args.shift();
+        result.conditions = args[0] || {};
+        return result;
+    }
 
-var emit = ExtendedEmitter.prototype.emit;
+    function meetsCriteria(name, object, testName, testObject){
+        if(name != testName) return false;
+        var result = true;
+        Object.keys(testObject).forEach(function(key){
+            result = result && object[key] === testObject[key];
+        });
+        return result;
+    }
 
-ExtendedEmitter.prototype.emit = function(){
-    emit.apply(this, arguments);
-}
+    function ExtendedEmitter(){
+        this.emitter = new EventEmitter();
+    }
 
-ExtendedEmitter.prototype.once = function(name){
-    var args = processArgs(arguments);
-    var ob = this;
-    on.apply(this, [args.name, function cb(data){
-        if(meetsCriteria(name, data, args.name, args.conditions)){
-            args.callback();
-            ob.off.apply(ob, [args.name, cb]);
-        }
-    }]);
-}
+    ExtendedEmitter.prototype.off = function(event, fn){
+        return this.emitter.removeListener.apply(this, arguments)
+    };
 
-ExtendedEmitter.prototype.when = function(events, callback){
-    var count = 0;
-    var returns = [];
-    var ob = this;
-    events.forEach(function(event, index){
-        var respond = function(emission){
-            count++;
-            returns[index] = emission;
-            if(count == events.length) callback.apply(callback, returns);
-        }
-        if(typeof event == 'function') event(respond);
-        else ob.once(event, respond);
-    });
-};
+    ExtendedEmitter.prototype.on = function(name){
+        var args = processArgs(arguments);
+        this.emitter.on.apply(this.emitter, [args.name, function(data){
+            if(meetsCriteria(name, data, args.name, args.conditions)){
+                args.callback.apply(args.callback, arguments);
+            }
+        }]);
+    }
 
-module.exports = ExtendedEmitter;
+    ExtendedEmitter.prototype.emit = function(){
+        return this.emitter.emit.apply(this.emitter, arguments);
+    }
+
+    ExtendedEmitter.prototype.once = function(name){
+        var args = processArgs(arguments);
+        var ob = this;
+        this.emitter.on.apply(this.emitter, [args.name, function cb(data){
+            if(meetsCriteria(name, data, args.name, args.conditions)){
+                args.callback.apply(args.callback, arguments);
+                ob.off.apply(ob, [args.name, cb]);
+            }
+        }]);
+    }
+
+    ExtendedEmitter.prototype.when = function(events, callback){
+        var count = 0;
+        var returns = [];
+        var ob = this;
+        events.forEach(function(event, index){
+            var respond = function(emission){
+                count++;
+                returns[index] = emission;
+                if(count == events.length) callback.apply(callback, returns);
+            }
+            if(typeof event == 'function') event(respond);
+            else return ob.emitter.once(event, respond);
+        });
+    };
+
+    return ExtendedEmitter;
+}));
