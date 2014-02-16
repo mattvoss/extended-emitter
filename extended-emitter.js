@@ -1,6 +1,6 @@
 (function(root, factory){
     if (typeof define === 'function' && define.amd){
-        define(['wolfy87-eventemitter', ''], factory);
+        define(['wolfy87-eventemitter'], factory);
     }else if(typeof exports === 'object'){
         module.exports = factory(require('events').EventEmitter);
     }else{
