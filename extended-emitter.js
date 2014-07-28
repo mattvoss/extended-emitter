@@ -35,6 +35,10 @@
     ExtendedEmitter.prototype.off = function(event, fn){
         return this.emitter.removeListener.apply(this, arguments)
     };
+    
+    ExtendedEmitter.prototype.allOff = function(event, fn){
+        return this.emitter.removeAllListeners.apply(this, arguments)
+    };
 
     ExtendedEmitter.prototype.on = function(name){
         var args = processArgs(arguments);
