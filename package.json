@@ -1,7 +1,7 @@
 {
     "name": "extended-emitter",
     "homepage": "https://github.com/khrome/extended-emitter",
-    "version": "0.0.2-alpha",
+    "version": "0.0.3-alpha",
     "main": "extended-emitter.js",
     "description": "An emitter with expanded utility, UMD with dependencies for node and the browser",
     "keywords": [

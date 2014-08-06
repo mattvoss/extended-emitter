@@ -33,20 +33,22 @@
     }
 
     ExtendedEmitter.prototype.off = function(event, fn){
-        return this.emitter.removeListener.apply(this, arguments)
+        return this.emitter.removeListener.apply(this.emitter, arguments)
     };
     
     ExtendedEmitter.prototype.allOff = function(event, fn){
-        return this.emitter.removeAllListeners.apply(this, arguments)
+        return this.emitter.removeAllListeners.apply(this.emitter, arguments)
     };
 
     ExtendedEmitter.prototype.on = function(name){
         var args = processArgs(arguments);
-        this.emitter.on.apply(this.emitter, [args.name, function(data){
+        var proxyFn = function(data){
             if(meetsCriteria(name, data, args.name, args.conditions)){
                 args.callback.apply(args.callback, arguments);
             }
-        }]);
+        };
+        this.emitter.on.apply(this.emitter, [args.name, proxyFn]);
+        return proxyFn;
     }
 
     ExtendedEmitter.prototype.emit = function(){
@@ -56,12 +58,14 @@
     ExtendedEmitter.prototype.once = function(name){
         var args = processArgs(arguments);
         var ob = this;
-        this.emitter.on.apply(this.emitter, [args.name, function cb(data){
+        var proxyFn = function cb(data){
             if(meetsCriteria(name, data, args.name, args.conditions)){
                 args.callback.apply(args.callback, arguments);
                 ob.off.apply(ob, [args.name, cb]);
             }
-        }]);
+        };
+        this.emitter.on.apply(this.emitter, [args.name, proxyFn]);
+        return proxyFn;
     }
 
     ExtendedEmitter.prototype.when = function(events, callback){
