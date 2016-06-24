@@ -1,11 +1,13 @@
 {
     "name": "extended-emitter",
     "homepage": "https://github.com/khrome/extended-emitter",
-    "version": "0.0.3-alpha",
+    "version": "1.0.0",
     "main": "extended-emitter.js",
     "description": "An emitter with expanded utility, UMD with dependencies for node and the browser",
     "keywords": [
-        "emitter"
+        "emitter",
+        "query",
+        "monitor"
     ],
     "author": "Abbey Hawk Sparrow <@khrome> (http://patternweaver.com)",
     "contributors": [],
@@ -18,11 +20,13 @@
         "url": "git@github.com:khrome/extended-emitter.git"
     },
     "dependencies": {
-        "wolfy87-eventemitter" :"*"
+        "wolfy87-eventemitter" :"*",
+        "sift" : "*"
     },
     "devDependencies": {
         "mocha": "*",
-        "should": "*"
+        "should": "*",
+        "vow": "*"
     },
     "optionalDependencies": {
     },

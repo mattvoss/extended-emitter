@@ -1,12 +1,12 @@
 (function(root, factory){
     if (typeof define === 'function' && define.amd){
-        define(['wolfy87-eventemitter'], factory);
+        define(['wolfy87-eventemitter', 'sift'], factory);
     }else if(typeof exports === 'object'){
-        module.exports = factory(require('events').EventEmitter);
+        module.exports = factory(require('events').EventEmitter, require('sift'));
     }else{
-        root.ExtendedEmitter = factory(root.EventEmitter);
+        root.ExtendedEmitter = factory(root.EventEmitter, root.Sift);
     }
-}(this, function(EventEmitter){
+}(this, function(EventEmitter, sift){
 
     function processArgs(args){
         var result = {};
@@ -20,17 +20,24 @@
     }
 
     function meetsCriteria(name, object, testName, testObject){
-        if(name != testName) return false;
-        var result = true;
-        Object.keys(testObject).forEach(function(key){
-            result = result && object[key] === testObject[key];
-        });
-        return result;
+	    if(name != testName) return false;
+	    if(!object) return true;
+	    var filter = sift(testObject);
+	    var result = filter(object);
+	    return result;
     }
 
     function ExtendedEmitter(){
         this.emitter = new EventEmitter();
     }
+    
+    ExtendedEmitter.prototype.onto = function(objectDefinition){
+	    var ob = this;
+        objectDefinition.on = function(){ return ob.on.apply(ob, arguments) };
+        objectDefinition.off = function(){ return ob.off.apply(ob, arguments) };
+        objectDefinition.once = function(){ return ob.once.apply(ob, arguments) };
+        objectDefinition.emit = function(){ return ob.emit.apply(ob, arguments) };
+    };
 
     ExtendedEmitter.prototype.off = function(event, fn){
         return this.emitter.removeListener.apply(this.emitter, arguments)
@@ -77,6 +84,13 @@
                 count++;
                 returns[index] = emission;
                 if(count == events.length) callback.apply(callback, returns);
+            }
+            if(event.then){ //promise handling
+	            event.then(function(resolve, error, notify){
+		            respond();
+		            resolve();
+	            });
+	            return;
             }
             if(typeof event == 'function') event(respond);
             else return ob.emitter.once(event, respond);
