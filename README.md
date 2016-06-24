@@ -30,7 +30,7 @@ or
 .when()
 -------
     
-and there's also the addition of a `when` function which can take ready-style arguments or events, making it easy to delay or wait for a state, without resorting to chaining.
+and there's also the addition of a `when` function which can take ready-style functions, real promises or events, making it easy to delay or wait for a state, without resorting to chaining.
 
     emitter.when([$(document).ready, 'my-init-event', 'my-load-event'], function(){
     	//do stuff
