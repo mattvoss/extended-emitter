@@ -29,6 +29,7 @@
 
     function ExtendedEmitter(){
         this.emitter = new EventEmitter();
+        if (typeof module === 'object' && module.exports && this.emitter.setMaxListeners) this.emitter.setMaxListeners(100);
     }
     
     ExtendedEmitter.prototype.onto = function(objectDefinition){
