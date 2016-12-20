@@ -1,5 +1,10 @@
 extended-emitter.js
-==============
+===================
+
+[![NPM version](https://img.shields.io/npm/v/extended-emitter.svg)]()
+[![npm](https://img.shields.io/npm/dt/extended-emitter.svg)]()
+[![Travis](https://img.shields.io/travis/khrome/extended-emitter.svg)]()
+
 Everything you expect from `require('events').EventEmitter` in both the browser and client, plus:
 
 - `.allOff()` : removes all events from this emitter
