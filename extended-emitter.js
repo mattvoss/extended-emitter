@@ -7,14 +7,16 @@
         root.ExtendedEmitter = factory(root.EventEmitter, root.Sift);
     }
 }(this, function(EventEmitter, sift){
+    if(sift.default) sift = sift.default;
 
-    function processArgs(args){
+    function processArgs(args, hasTarget){
         var result = {};
-        if(typeof args[args.length-1] == 'function'){
+        if(typeof args[args.length-1] === 'function'){
             result.callback = args[args.length-1];
         }
         args = Array.prototype.slice.call(args);
         result.name = args.shift();
+        if(hasTarget) result.target = args.pop();
         result.conditions = args[0] || {};
         return result;
     }
@@ -24,6 +26,7 @@
 	    if(!object) return true;
 	    var filter = sift(testObject);
 	    var result = filter(object);
+      //console.log('>>>', filter, testObject, result);
 	    return result;
     }
 
@@ -31,7 +34,7 @@
         this.emitter = new EventEmitter();
         if (typeof module === 'object' && module.exports && this.emitter.setMaxListeners) this.emitter.setMaxListeners(100);
     }
-    
+
     ExtendedEmitter.prototype.onto = function(objectDefinition){
 	    var ob = this;
         objectDefinition.on = function(){ return ob.on.apply(ob, arguments) };
@@ -43,15 +46,17 @@
     ExtendedEmitter.prototype.off = function(event, fn){
         return this.emitter.removeListener.apply(this.emitter, arguments)
     };
-    
+
     ExtendedEmitter.prototype.allOff = function(event, fn){
         return this.emitter.removeAllListeners.apply(this.emitter, arguments)
     };
 
     ExtendedEmitter.prototype.on = function(name){
         var args = processArgs(arguments);
+        //console.log('DEF', arguments, args, args.callback.toString())
         var proxyFn = function(data){
             if(meetsCriteria(name, data, args.name, args.conditions)){
+               //console.log('CB', args, args.callback.toString())
                 args.callback.apply(args.callback, arguments);
             }
         };
