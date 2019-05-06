@@ -24,7 +24,7 @@
     function meetsCriteria(name, object, testName, testObject){
 	    if(name != testName) return false;
 	    if(!object) return true;
-	    var filter = sift(testObject);
+	    var filter = sift.default(testObject);
 	    var result = filter(object);
       //console.log('>>>', filter, testObject, result);
 	    return result;
