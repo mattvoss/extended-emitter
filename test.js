@@ -1,6 +1,7 @@
 var should = require("should");
 var Emitter = require('./extended-emitter.js');
 var Promise = require('vow').Promise;
+const describe = require('describe');
 
 describe('Extended Emitter can', function(){
 	
